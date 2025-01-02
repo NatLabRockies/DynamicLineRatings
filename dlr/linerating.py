@@ -231,7 +231,7 @@ def get_weather_h5py(
             if data == 'nsrdb':
                 dictweather[weather,year] = (
                     dictweather[weather,year]
-                    .set_index([idx.tz_localize(None) for idx in dictweather[weather,year].index])
+                    .set_index(dictweather[weather,year].index.tz_localize(None))
                     .iloc[::2]
                 )
             ## Pressure is in kPa but needs to be in Pa

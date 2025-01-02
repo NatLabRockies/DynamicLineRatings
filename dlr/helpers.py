@@ -261,14 +261,14 @@ def get_grids(bounds=None, verbose=False, buffer=40, offshore=True):
         or (not os.path.exists(paths.meta_wtk))
     ):
         print('Downloading and caching NSRDB/WTK points (subsequent calls will be faster)')
-        nsrdb_file = get_hdf5_file(paths.meta_nsrdb.format(year=2012))
+        nsrdb_file = get_hdf5_file(paths.nsrdb.format(year=2012))
         with nsrdb_file as f:
             if verbose:
                 nsrdb_list = list(f)
                 print(nsrdb_list)
             meta['nsrdb'] = pd.DataFrame(f['meta'][...])
 
-        wtk_file = get_hdf5_file(paths.meta_wtk.format(year=2012))
+        wtk_file = get_hdf5_file(paths.wtk.format(year=2012))
         with wtk_file as f:
             if verbose:
                 wtk_list = list(f)

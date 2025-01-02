@@ -172,7 +172,7 @@ if __name__ == "__main__":
         "variable wind direction (options: ['wtk'])"
     )
     parser.add_argument(
-        "-t", "--temperature", required=False, nargs="?", default=40,
+        "-t", "--temperature", required=False, nargs="?", default=40+physics.C2K,
         help="Static ambient air temperature (in Celsius) or data source for "
         "variable air temp (options: ['wtk'])"
     )
