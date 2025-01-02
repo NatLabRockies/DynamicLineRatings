@@ -10,6 +10,7 @@ import h5py
 from tqdm import tqdm
 import geopandas as gpd
 import h5pyd
+import pyproj
 ## Local
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import physics
@@ -17,6 +18,7 @@ import paths
 import plots
 import fiona
 
+pyproj.network.set_network_enabled(False)
 os.environ['USE_PYGEOS'] = '0'
 
 #%% Constants

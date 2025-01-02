@@ -37,11 +37,12 @@ def get_cells(line, meta=None, buffer_km=10):
     voronois = {}
     keep_cells = {}
     for data in ['nsrdb','wtk']:
-        voronois[data] = helpers.voronoi_polygons(meta[data][['x','y','i']])
-        voronois[data]['i'] = meta[data].iloc[
+        df = meta[data]
+        voronois[data] = helpers.voronoi_polygons(df[['x','y','i']])
+        voronois[data]['i'] = df.iloc[
             helpers.closestpoint(
                 voronois[data],
-                meta[data],
+                df,
                 dfquerylabel=None, 
                 dfqueryx='centroid_x',
                 dfqueryy='centroid_y', 
