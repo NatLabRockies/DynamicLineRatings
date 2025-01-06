@@ -3,7 +3,7 @@ import datetime
 import os
 
 ## This repository
-repo = os.path.realpath(os.path.join(os.path.dirname(__file__),'..'))
+repo = os.path.realpath(os.path.join(os.path.dirname(__file__),'../..'))
 data = os.path.join(repo, 'data')
 outputs = os.path.join(repo, 'outputs')
 io = os.path.join(data, 'io')

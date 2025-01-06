@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import io
 import os
-import sys
 import requests
 import zipfile
 import h5py
@@ -11,11 +10,7 @@ from tqdm import tqdm
 import geopandas as gpd
 import h5pyd
 import pyproj
-## Local
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-import physics
-import paths
-import plots
+from dlr import physics, paths, plots
 import fiona
 
 pyproj.network.set_network_enabled(False)
@@ -596,6 +591,7 @@ def get_hifld(
     dflines = read_lines(fpath, crs='ESRI:102008')
     _dfhifld = (
         lookup_diameter_resistance(dflines=dflines)
+        .reset_index()
         .astype({'ID':int})
         .set_index('ID')
         .loc[hifld_ids]

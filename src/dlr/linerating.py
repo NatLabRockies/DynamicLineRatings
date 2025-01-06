@@ -2,17 +2,10 @@
 import pandas as pd
 import math
 import os
-import sys
 from tqdm import tqdm
 import geopandas as gpd
 import shapely
-import h5py
-import h5pyd
-## Local
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-import helpers
-import paths
-from dlr import physics
+from dlr import physics, helpers, paths
 
 os.environ['USE_PYGEOS'] = '0'
 
