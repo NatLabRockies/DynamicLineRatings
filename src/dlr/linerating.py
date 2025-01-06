@@ -309,7 +309,7 @@ def calc_ratings(
     if isinstance(temp_ambient_air_data, pd.DataFrame):
         temp_ambient_air_data += physics.C2K
     pressure_data = dfweather.get('pressure', {})
-    solar_ghi_data = dfweather.get(ghi_type, {})
+    solar_ghi_data = dfweather[ghi_type] if isinstance(solar_ghi, str) else {}
 
     if 'winddirection' in dfweather:
         ### Get segment angles from North
