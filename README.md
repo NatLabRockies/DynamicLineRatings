@@ -9,6 +9,7 @@ Methodological details and important caveats are described at https://www.nrel.g
 2. Navigate to the repository directory, then set up the conda environment:
     1. `conda env create -f environment.yml`
     2. Each time you use code from this repo, run `conda activate dlr` first.
+    3. `pip install -e .`
 3. To access WTK and NSRDB data remotely, set up your `~/.hscfg` file following the directions at https://github.com/NREL/hsds-examples:
     1. Request an NREL API key from https://developer.nrel.gov/signup/
     2. Create a `~/.hscfg` file with the following information:

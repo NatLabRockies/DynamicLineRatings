@@ -10,7 +10,7 @@ name = "nrel-dlr"
 version = "0.0.1"
 authors = [
     { name = "Patrick R. Brown", email = "patrick.brown@nrel.gov" },
-    { name = "Obika Kodi", email = "kodi.obika@nrel.gov" },
+    { name = "Kodi Obika", email = "kodi.obika@nrel.gov" },
 ]
 description = "A tool for estimating dynamic transmission line ratings (DLR) using weather data"
 readme = "README.md"
