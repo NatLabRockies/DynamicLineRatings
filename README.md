@@ -2,18 +2,20 @@
 
 This package provides tools for estimating dynamic transmission line ratings (DLR) using weather data from the [WIND Toolkit (WTK)](https://www.nrel.gov/grid/wind-toolkit.html) and [National Solar Radiation Database (NSRDB)](https://nsrdb.nrel.gov/). Transmission line routes can be pulled from the [Transmission Lines Homeland Infrastructure Foundation-Level Dataset (HIFLD)](https://hifld-geoplatform.hub.arcgis.com/datasets/geoplatform::transmission-lines) or provided by the user.
 
-Methodological details and important caveats are described at https://www.nrel.gov/docs/fy25osti/91599.pdf. Example outputs for ~84,000 HIFLD lines are available at https://data.openei.org/submissions/6231.
+Methodological details and important caveats are described at [https://www.nrel.gov/docs/fy25osti/91599.pdf](https://www.nrel.gov/docs/fy25osti/91599.pdf). Example outputs for ~84,000 HIFLD lines are available at [https://data.openei.org/submissions/6231](https://data.openei.org/submissions/6231).
 
 ## Installation
+
 1. Clone this repo: `git clone git@github.com:NREL/DynamicLineRatings.git`
 2. Navigate to the repository directory, then set up the conda environment:
     1. `conda env create -f environment.yml`
     2. Each time you use code from this repo, run `conda activate dlr` first.
     3. `pip install -e .`
-3. To access WTK and NSRDB data remotely, set up your `~/.hscfg` file following the directions at https://github.com/NREL/hsds-examples:
-    1. Request an NREL API key from https://developer.nrel.gov/signup/
+3. To access WTK and NSRDB data remotely, set up your `~/.hscfg` file following the directions at [https://github.com/NREL/hsds-examples](https://github.com/NREL/hsds-examples):
+    1. Request an NREL API key from [https://developer.nrel.gov/signup/](https://developer.nrel.gov/signup/)
     2. Create a `~/.hscfg` file with the following information:
-        ```
+
+        ```text
         hs_endpoint = https://developer.nrel.gov/api/hsds
         hs_username = None
         hs_password = None
@@ -21,7 +23,9 @@ Methodological details and important caveats are described at https://www.nrel.g
         ```
 
 ## Usage
+
 ### CLI
+
 ```console
 $ python -m dlr --help
 usage: __main__.py [-h] [-s [START]] [-e [END]] [-y YEARS [YEARS ...]] [-w [WINDSPEED]] [-d [WIND_CONDUCTOR_ANGLE]] [-t [TEMPERATURE]]
@@ -52,11 +56,13 @@ options:
 ```
 
 Example:
+
 ```console
 python -m dlr -s 0 -e 10 --windspeed wtk --wind_conductor_angle 90 --irradiance nsrdb-ghi --conductor_params temperature=100 emissivity=0.9
 ```
 
 ### API
+
 See [analysis/example_calc.ipynb](https://github.com/NREL/DynamicLineRatings/blob/main/analysis/example_calc.ipynb) for an example line rating calculation.
 
-See [analysis/example_oedi.ipynb](https://github.com/NREL/DynamicLineRatings/blob/main/analysis/example_oedi.ipynb) for an example of how to interact with the precalculated datasets available at https://data.openei.org/submissions/6231.
+See [analysis/example_oedi.ipynb](https://github.com/NREL/DynamicLineRatings/blob/main/analysis/example_oedi.ipynb) for an example of how to interact with the precalculated datasets available at [https://data.openei.org/submissions/6231](https://data.openei.org/submissions/6231).
