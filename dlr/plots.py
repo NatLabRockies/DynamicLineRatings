@@ -311,7 +311,7 @@ def addcolorbarhist(
         
         cax = f.add_axes([caxleft, caxbottom, caxwidth, caxheight])
 
-        _cb1 = mpl.colorbar.ColorbarBase(
+        cbar = mpl.colorbar.ColorbarBase(
             cax, cmap=cmap, norm=norm, orientation='horizontal',
             extend=extend, extendfrac=extendfrac)
         cax.xaxis.set_ticks_position('bottom')
@@ -406,7 +406,7 @@ def addcolorbarhist(
 
         cax = f.add_axes([caxleft, caxbottom, caxwidth, caxheight])
 
-        _cb1 = mpl.colorbar.ColorbarBase(
+        cbar = mpl.colorbar.ColorbarBase(
             cax, cmap=cmap, norm=norm, orientation='vertical',
             extend=extend, extendfrac=extendfrac)
         cax.yaxis.set_ticks_position('left')
@@ -478,7 +478,7 @@ def addcolorbarhist(
             cax.set_yticklabels(yticklabels)
 
     ### Return axes
-    return cax, hax
+    return cax, hax, cbar
 
 
 def plotyearbymonth(dfs, plotcols=None, colors=None, 
