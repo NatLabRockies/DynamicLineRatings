@@ -816,10 +816,11 @@ def get_ratings(
                     data=h['data'][:, keepcols.values],
                 )
             else:
+                _data = h['data'][keepindex.values]
                 dfout = pd.DataFrame(
                     columns=keepcols.index,
                     index=_timestamps,
-                    data=h['data'][keepindex.values, keepcols.values],
+                    data=_data[:, keepcols.values],
                 )
         elif len(keepcols) > 1:
             if all_ids:
