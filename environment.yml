@@ -5,3 +5,6 @@ channels:
 dependencies:
   - python=3.12
   - pip
+  - nb_conda=2.2
+  - proj-data=1.19
+  - proj=9.5

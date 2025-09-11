@@ -22,15 +22,22 @@ def get_cells(line, meta=None, buffer_km=10):
     """
     ## Get raster of weather points if necessary
     if meta is None:
-        ## Add a buffer around the line to avoid edge effects
-        linebuffer = line.geometry.buffer(buffer_km * 1e3)
-        meta = helpers.get_grids(bounds=linebuffer.bounds)
+        meta = helpers.get_grids()
+
+    ## Add a buffer around the line to avoid edge effects
+    linebuffer = line.geometry.buffer(buffer_km * 1e3)
+    linebounds = dict(zip(['minx','miny','maxx','maxy'], linebuffer.bounds))
 
     ## Get Voronoi polygons for cells
     voronois = {}
     keep_cells = {}
     for data in ['nsrdb','wtk']:
-        df = meta[data]
+        df = meta[data].loc[
+            (linebounds['miny'] <= meta[data].y)
+            & (meta[data].y <= linebounds['maxy'])
+            & (linebounds['minx'] <= meta[data].x)
+            & (meta[data].x <= linebounds['maxx'])
+        ]
         voronois[data] = helpers.voronoi_polygons(df[['x','y','i']])
         voronois[data]['i'] = df.iloc[
             helpers.closestpoint(
