@@ -38,6 +38,7 @@ def get_cells(line, meta=None, buffer_km=10):
             & (linebounds['minx'] <= meta[data].x)
             & (meta[data].x <= linebounds['maxx'])
         ]
+
         voronois[data] = helpers.voronoi_polygons(df[['x','y','i']])
         voronois[data]['i'] = df.iloc[
             helpers.closestpoint(

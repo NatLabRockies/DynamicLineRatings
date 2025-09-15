@@ -28,7 +28,6 @@ dependencies = [
     "h5py~=3.12",
     "h5pyd~=0.18",
     "matplotlib~=3.9",
-    "nrel-rex~=0.2",
     "numpy~=2.1",
     "pandas~=2.2",
     "rasterio~=1.4",
