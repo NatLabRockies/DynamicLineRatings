@@ -249,6 +249,7 @@ def get_weather_h5py(
 
 def calc_ratings(
     line: gpd.GeoSeries,
+    meta: dict | None = None,
     years: int | list[int] = list(range(2007, 2014)),
     windspeed: float | str = 0.61,
     pressure: float | str = 101325,
@@ -260,7 +261,6 @@ def calc_ratings(
     absorptivity_conductor: float | str = 0.8,
     forecast_margin: dict = {},
     check_units: bool = True,
-    meta: dict | None = None,
 ):
     """Calculate hourly ratings for a given line as a function of weather and conductor parameters.
 
@@ -309,6 +309,7 @@ def calc_ratings(
 
     dfweather = get_weather_h5py(
         line=line,
+        meta=meta,
         weather2data=weather2data,
         years=years,
         verbose=1,

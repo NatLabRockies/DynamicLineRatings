@@ -130,9 +130,11 @@ def run(
 
     emissivity_conductor = conductor_params.get("emissivity", 0.8)
     absorptivity_conductor = conductor_params.get("absorptivity", 0.8)
+    meta = helpers.get_grids()
     for iline, line in dflines.iterrows():
         hourly_ratings = linerating.calc_ratings(
             line=line,
+            meta=meta,
             years=years,
             windspeed=windspeed,
             pressure=pressure,
