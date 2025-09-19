@@ -238,7 +238,7 @@ def get_reeds_zones(
     return dfmap
 
 
-def get_grids(bounds=None, verbose=False, buffer=40, offshore=True):
+def get_grids(verbose=False, buffer=40, offshore=True):
     """
     Inputs
     - buffer (float): km buffer to include around the contiguous U.S.
@@ -296,7 +296,7 @@ def get_grids(bounds=None, verbose=False, buffer=40, offshore=True):
 
     ### Read them
     for data in ['nsrdb', 'wtk']:
-        meta[data] = gpd.read_file(os.path.join(paths.io, f'meta_{data}.gpkg'), bbox=bounds)
+        meta[data] = gpd.read_file(os.path.join(paths.io, f'meta_{data}.gpkg'))
 
     return meta
 

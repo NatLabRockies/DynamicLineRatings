@@ -260,6 +260,7 @@ def calc_ratings(
     absorptivity_conductor: float | str = 0.8,
     forecast_margin: dict = {},
     check_units: bool = True,
+    meta: dict | None = None,
 ):
     """Calculate hourly ratings for a given line as a function of weather and conductor parameters.
 
@@ -291,7 +292,7 @@ def calc_ratings(
         current (numeric): Rated ampacity [A]
     """
     ### Get grid cells
-    keep_cells = get_cells(line=line, buffer_km=10)
+    keep_cells = get_cells(line=line, meta=meta, buffer_km=10)
     cell_combinations = get_cell_overlaps(keep_cells=keep_cells)
 
     ### Get weather data
