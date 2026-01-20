@@ -317,12 +317,11 @@ def read_lines(
     line_idx_range: slice | None = None,
     crs: str = 'ESRI:102008',
 ):
-    match fpath:
-        case _ if fpath.endswith('.kml'):
-            fiona.supported_drivers['KML'] = 'rw'
-            dflines = gpd.read_file(fpath, driver='KML', rows=line_idx_range)
-        case _:
-            dflines = gpd.read_file(fpath, rows=line_idx_range)
+    if fpath.endswith('.kml'):
+        fiona.supported_drivers['KML'] = 'rw'
+        dflines = gpd.read_file(fpath, driver='KML', rows=line_idx_range)
+    else:
+        dflines = gpd.read_file(fpath, rows=line_idx_range)
 
     dflines = dflines.set_index('ID').to_crs(crs)
     return dflines
