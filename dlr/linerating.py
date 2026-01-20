@@ -230,19 +230,16 @@ def get_weather_h5py(
         hdf5_file = helpers.get_hdf5_file(fpath)
         with hdf5_file as f:
             time_index = pd.to_datetime(f['time_index'][...].astype(str))
+            if time_index.tz is None:
+                time_index = time_index.tz_localize('UTC')
             dictweather[weather,year] = pd.DataFrame(
                 f[datum][:,indices],
                 index=time_index,
                 columns=indices,
             ) * scale[data]
-            ## To make NSRDB data consistent with WTK, remove time
-            ## zone information and downsample to 60-minute resolution
+            ## NSRDB has 30-minute resolution, so downsample to 60-minute to match WTK
             if data == 'nsrdb':
-                dictweather[weather,year] = (
-                    dictweather[weather,year]
-                    .set_index(dictweather[weather,year].index.tz_localize(None))
-                    .iloc[::2]
-                )
+                dictweather[weather,year] = dictweather[weather,year].iloc[::2]
             ## Pressure is in kPa but needs to be in Pa
             if datum.startswith('pressure'):
                 dictweather[weather,year] *= 1e3
