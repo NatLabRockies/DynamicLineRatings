@@ -6,11 +6,14 @@ Methodological details and important caveats are described at [https://www.nrel.
 
 ## Installation
 
-1. Clone this repo: `git clone git@github.com:NREL/DynamicLineRatings.git`
-2. Navigate to the repository directory, then set up the conda environment:
+1. To set up your own development version of this repo:
+  1. Clone this repo: `git clone git@github.com:NREL/DynamicLineRatings.git`
+  2. Navigate to the repository directory, then set up the conda environment:
     1. `conda env create -f environment.yml`
     2. Each time you use code from this repo, run `conda activate dlr` first.
     3. `pip install -e .`
+2. Alternatively, to include as a package in a separate conda environment, add this line to your `environment.yaml` (or run it with your environment activated):
+  1. `pip install git+https://github.com/NREL/DynamicLineRatings.git`
 3. To access WTK and NSRDB data remotely, set up your `~/.hscfg` file following the directions at [https://github.com/NREL/hsds-examples](https://github.com/NREL/hsds-examples):
     1. Request an NREL API key from [https://developer.nrel.gov/signup/](https://developer.nrel.gov/signup/)
     2. Create a `~/.hscfg` file with the following information:
