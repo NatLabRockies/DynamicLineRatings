@@ -23,8 +23,8 @@ class DictArg(argparse.Action):
 def process_cli_args(args):
     """Checks for valid CLI arguments and converts numeric arguments to floats."""
 
-    valid_wind_sources = ["wtk"]
-    valid_irradiance_pairs = ["nsrdb-ghi", "nsrdb-clearsky_ghi"]
+    valid_wind_args = ["data"]
+    valid_irradiance_args = ["ghi", "clearsky_ghi"]
     valid_conductor_params = ["temperature", "emissivity", "absorptivity"]
     valid_forecast_margin_params = [
         "windspeed", "wind_conductor_angle", "temperature", "pressure", "irradiance"
@@ -40,18 +40,18 @@ def process_cli_args(args):
             else:
                 match key:
                     case "windspeed" | "wind_conductor_angle" | "temperature" | "pressure":
-                        if value not in valid_wind_sources:
+                        if value not in valid_wind_args:
                             raise NotImplementedError(
-                                f"The acceptable data sources for {key} are "
-                                f"{valid_wind_sources}. Handling for '{value}' "
+                                f"The valid arguments for {key} are "
+                                f"{valid_wind_args}. Handling for '{value}' "
                                 "is not implemented."
                             )
                     case "irradiance":
-                        if value not in valid_irradiance_pairs:
+                        if value not in valid_irradiance_args:
                             raise NotImplementedError(
-                                f"The acceptable source-type pairs for {key} are "
-                                f"{valid_irradiance_pairs}. Handling for '{value}' is "
-                                "not implemented."
+                                f"The valid arguments for {key} are "
+                                f"{valid_irradiance_args}. Handling for "
+                                f"'{value}' is not implemented."
                             )
         else:
             match key:
@@ -59,7 +59,7 @@ def process_cli_args(args):
                     for param, param_value in args_dict[key].items():
                         if param not in valid_conductor_params:
                             raise NotImplementedError(
-                                f"The acceptable conductor parameters are "
+                                f"The valid conductor parameters are "
                                 f"{valid_conductor_params}. Handling for '{param}' is "
                                 "not implemented."
                             )
@@ -70,7 +70,7 @@ def process_cli_args(args):
                     for param, param_value in args_dict[key].items():
                         if param not in valid_forecast_margin_params:
                             raise NotImplementedError(
-                                f"The acceptable conductor parameters are "
+                                f"The valid forecast margin parameters are "
                                 f"{valid_forecast_margin_params}. Handling for '{param}' "
                                 "is not implemented."
                             )
@@ -99,16 +99,17 @@ def run(
         line_idx_end: Ending index of subset of lines to process, based on data source specified in
             'paths.lines'
         years: int or list representing year(s) of historic weather data
-        windspeed (numeric, str): Static windspeed [m/s] or data source for variable windspeed 
-            (e.g., 'wtk')
-        pressure (numeric, str): Static air pressure [Pa] or data source for variable pressure 
-            (e.g., 'wtk')
-        temp_ambient_air (numeric, str): Static air temperature [K] or data source for variable temp
-            (e.g., 'wtk')
-        wind_conductor_angle (numeric): Static angle between wind direction and line segment [°] or
-            data source for variable wind direction (e.g., 'wtk')
-        solar_ghi (numeric): Static solar global horizontal irradiance [W m^-2] or '-'-delimited
-            pair of variable irradiance data source and irradiance type (e.g., 'nsrdb-ghi')
+        windspeed (numeric, str): Static windspeed [m/s] or "data" to use
+            WTK hourly windspeed data
+        pressure (numeric, str): Static air pressure [Pa] or "data" to
+            use WTK hourly pressure data
+        temp_ambient_air (numeric, str): Static air temperature [K] or
+            "data" to use WTK hourly temperature data
+        wind_conductor_angle (numeric): Static angle between wind direction and
+            line segment [°] or "data" to use WTK hourly wind direction data
+        solar_ghi (numeric): Static solar global horizontal irradiance [W m^-2]
+            or irradiance type (e.g., "clearsky_ghi") to use NSRDB hourly
+            irradiance data of the provided type
         conductor_params (dict[str, numeric]): Dictionary to override default values for
             conductor temperature (75°C), absorptivity (0.8), and emissivity (0.8)
         forecast_margin (dict[str, numeric]): Additive adjustments to apply to each
@@ -186,7 +187,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i", "--irradiance", required=False, nargs="?", default=1000,
         help="Static solar irradiance (in W/m**2) or '-'-delimited pair of data source for "
-        "variable irradiance and irradiance type (options: ['nsrdb-ghi', 'nsrdb-clearsky_ghi'])"
+        "variable irradiance and irradiance type (options: ['ghi', 'clearsky_ghi'])"
     )
     parser.add_argument(
         "-c", "--conductor_params", required=False, nargs="*", action=DictArg, default={},

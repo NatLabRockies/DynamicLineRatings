@@ -151,8 +151,8 @@ def get_segment_azimuths(line, cell_combinations, full_output=False):
 
 def get_weather_h5py(
     line,
-    weather2data,
     meta=None,
+    weatherlist=['temperature','windspeed','winddirection','pressure','ghi'],
     height=10,
     years=range(2007,2014),
     verbose=0,
@@ -175,7 +175,7 @@ def get_weather_h5py(
         'clearsky_ghi',
         'ghi',
     ]
-    for i in weather2data.keys():
+    for i in weatherlist:
         assert i in allowed_weatherlist, (
             f"Provided {i} in weatherlist but only the following are allowed:\n"
             + '\n> '.join(allowed_weatherlist)
@@ -189,7 +189,15 @@ def get_weather_h5py(
     if isinstance(years, (int, float)):
         years = [int(years)]
 
-    ## Convenience dict
+    ## Convenience dicts
+    weather2data = {
+        'temperature': 'wtk',
+        'windspeed': 'wtk',
+        'winddirection': 'wtk',
+        'pressure': 'wtk',
+        'clearsky_ghi': 'nsrdb',
+        'ghi': 'nsrdb',
+    }
     weather2datum = {
         'temperature': f'temperature_{height}m',
         'windspeed': f'windspeed_{height}m',
@@ -198,12 +206,11 @@ def get_weather_h5py(
         'clearsky_ghi': 'clearsky_ghi',
         'ghi': 'ghi',
     }
-    weather2datum = {k:v for k,v in weather2datum.items() if k in weather2data.keys()}
     datum2weather = {v:k for k,v in weather2datum.items()}
     datums = {
         data: sorted(set([
             datum for weather,datum in weather2datum.items()
-            if weather2data[weather] == data
+            if ((weather in weatherlist) and (weather2data[weather] == data))
         ]))
         for data in ['wtk', 'nsrdb']
     }
@@ -219,7 +226,7 @@ def get_weather_h5py(
         weather = datum2weather[datum]
         indices = keep_cells[data].i.sort_values().values
         fpath = fpaths[data].format(year=year)
-        
+
         hdf5_file = helpers.get_hdf5_file(fpath)
         with hdf5_file as f:
             time_index = pd.to_datetime(f['time_index'][...].astype(str))
@@ -228,8 +235,8 @@ def get_weather_h5py(
                 index=time_index,
                 columns=indices,
             ) * scale[data]
-            ## NSRDB has localized timestamps at 30-minute resolution, so
-            # delocalize and downsample to 60-minute to match WTK
+            ## To make NSRDB data consistent with WTK, remove time
+            ## zone information and downsample to 60-minute resolution
             if data == 'nsrdb':
                 dictweather[weather,year] = (
                     dictweather[weather,year]
@@ -242,7 +249,7 @@ def get_weather_h5py(
 
     dfweather = {
         weather: pd.concat([dictweather[weather,year] for year in years])
-        for weather in weather2data.keys()
+        for weather in weatherlist
     }
 
     return dfweather
@@ -262,21 +269,24 @@ def calc_ratings(
     forecast_margin: dict = {},
     check_units: bool = True,
 ):
-    """Calculate hourly ratings for a given line as a function of weather and conductor parameters.
+    """
+    Calculate hourly ratings for a given line as a
+    function of weather and conductor parameters.
 
     Args:
         line: gpd.GeoSeries
         years: int or list representing year(s) of historic weather data
-        windspeed (numeric, str): Static windspeed [m/s] or data source for variable windspeed 
-            (e.g., 'wtk')
-        pressure (numeric, str): Static air pressure [Pa] or data source for variable pressure 
-            (e.g., 'wtk')
-        temp_ambient_air (numeric, str): Static air temperature [K] or data source for variable temp
-            (e.g., 'wtk')
-        wind_conductor_angle (numeric): Static angle between wind direction and line segment [°] or
-            data source for variable wind direction (e.g., 'wtk')
-        solar_ghi (numeric): Static solar global horizontal irradiance [W m^-2] or '-'-delimited
-            pair of variable irradiance data source and irradiance type (e.g., 'nsrdb-ghi')
+        windspeed (numeric, str): Static windspeed [m/s] or "data" to use
+            WTK hourly windspeed data
+        pressure (numeric, str): Static air pressure [Pa] or "data" to
+            use WTK hourly pressure data
+        temp_ambient_air (numeric, str): Static air temperature [K] or
+            "data" to use WTK hourly temperature data
+        wind_conductor_angle (numeric): Static angle between wind direction and
+            line segment [°] or "data" to use WTK hourly wind direction data
+        solar_ghi (numeric): Static solar global horizontal irradiance [W m^-2]
+            or irradiance type (e.g., "clearsky_ghi") to use NSRDB hourly
+            irradiance data of the provided type
         temp_conductor (float): Maximum allowable temperature of conductor [K].
             Default of 75°C + C2K = 348.15 K is a rule of thumb for ACSR conductors.
         diameter_conductor (float): Diameter of conductor [m]
@@ -285,8 +295,8 @@ def calc_ratings(
         emissivity_conductor (float): Emissivity of conductor. Defaults to 0.8.
         forecast_margin (dict[str, numeric]): Additive adjustments to apply to each
             weather parameter
-        check_units (bool): Check that provided temperature and pressure values are within
-            reasonable ranges (assuming units of K and Pa respectively)
+        check_units (bool): Check that provided temperature and pressure values
+            are within reasonable ranges (assuming units of K and Pa respectively)
 
     Returns:
         current (numeric): Rated ampacity [A]
@@ -296,21 +306,22 @@ def calc_ratings(
     cell_combinations = get_cell_overlaps(keep_cells=keep_cells)
 
     ### Get weather data
-    weather2data = {
-        'temperature': temp_ambient_air,
-        'windspeed': windspeed,
-        'winddirection': wind_conductor_angle,
-        'pressure': pressure
-    }
-    weather2data = {k:v for k,v in weather2data.items() if isinstance(v, str)}
+    weatherlist = []
+    if temp_ambient_air == 'data':
+        weatherlist.append('temperature')
+    if windspeed == 'data':
+        weatherlist.append('windspeed')
+    if wind_conductor_angle == 'data':
+        weatherlist.append('winddirection')
+    if pressure == 'data':
+        weatherlist.append('pressure')
     if isinstance(solar_ghi, str):
-        ghi_source, ghi_type = solar_ghi.split('-')
-        weather2data[ghi_type] = ghi_source
+        weatherlist.append(solar_ghi)
 
     dfweather = get_weather_h5py(
         line=line,
         meta=meta,
-        weather2data=weather2data,
+        weatherlist=weatherlist,
         years=years,
         verbose=1,
     )
@@ -319,7 +330,7 @@ def calc_ratings(
     if isinstance(temp_ambient_air_data, pd.DataFrame):
         temp_ambient_air_data += physics.C2K
     pressure_data = dfweather.get('pressure', {})
-    solar_ghi_data = dfweather[ghi_type] if isinstance(solar_ghi, str) else {}
+    solar_ghi_data = dfweather.get(solar_ghi, {})
 
     if 'winddirection' in dfweather:
         ### Get segment angles from North
