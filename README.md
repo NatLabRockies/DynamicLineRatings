@@ -84,7 +84,7 @@ options:
 Example:
 
 ```console
-python -m dlr -s 0 -e 10 --windspeed data --wind_conductor_angle 90 --irradiance nsrdb-ghi --conductor_params temperature=100 emissivity=0.9
+python -m dlr -s 0 -e 10 --windspeed wtk --wind_conductor_angle 90 --irradiance nsrdb-ghi --conductor_params temperature=100 emissivity=0.9
 ```
 
 ### API

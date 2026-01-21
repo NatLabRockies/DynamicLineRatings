@@ -23,8 +23,8 @@ class DictArg(argparse.Action):
 def process_cli_args(args):
     """Checks for valid CLI arguments and converts numeric arguments to floats."""
 
-    valid_wind_args = ["data"]
-    valid_irradiance_args = ["ghi", "clearsky_ghi"]
+    valid_wind_args = ["wtk"]
+    valid_irradiance_args = ["nsrdb-ghi", "nsrdb-clearsky_ghi"]
     valid_conductor_params = ["temperature", "emissivity", "absorptivity"]
     valid_forecast_margin_params = [
         "windspeed", "wind_conductor_angle", "temperature", "pressure", "irradiance"
@@ -91,29 +91,33 @@ def run(
     conductor_params: dict = {},
     forecast_margin: dict = {}
 ):
-    """Calculate hourly ratings for a set of lines as a function of weather and conductor parameters.
+    """
+    Calculate hourly ratings for a set of lines as
+    a function of weather and conductor parameters.
 
     Args:
-        line_idx_start: Starting index of subset of lines to process, based on data source specified
-            in 'paths.lines'
-        line_idx_end: Ending index of subset of lines to process, based on data source specified in
-            'paths.lines'
-        years: int or list representing year(s) of historic weather data
-        windspeed (numeric, str): Static windspeed [m/s] or "data" to use
-            WTK hourly windspeed data
-        pressure (numeric, str): Static air pressure [Pa] or "data" to
-            use WTK hourly pressure data
+        line_idx_start: Starting index of subset of lines to process,
+            based on data source specified in 'paths.lines'
+        line_idx_end: Ending index of subset of lines to process,
+            based on data source specified in 'paths.lines'
+        years: int or list representing year(s) of historical weather data
+        windspeed (numeric, str): Static windspeed [m/s] or data source
+            for variable windspeed (options: ['wtk'])
+        pressure (numeric, str): Static air pressure [Pa] or data source
+            for variable pressure (options: ['wtk'])
         temp_ambient_air (numeric, str): Static air temperature [K] or
-            "data" to use WTK hourly temperature data
-        wind_conductor_angle (numeric): Static angle between wind direction and
-            line segment [°] or "data" to use WTK hourly wind direction data
+            data source for variable temp (options: ['wtk'])
+        wind_conductor_angle (numeric): Static angle between wind direction
+            and line segment [°] or data source for variable wind direction
+            (options: ['wtk'])
         solar_ghi (numeric): Static solar global horizontal irradiance [W m^-2]
-            or irradiance type (e.g., "clearsky_ghi") to use NSRDB hourly
-            irradiance data of the provided type
-        conductor_params (dict[str, numeric]): Dictionary to override default values for
-            conductor temperature (75°C), absorptivity (0.8), and emissivity (0.8)
-        forecast_margin (dict[str, numeric]): Additive adjustments to apply to each
-            weather parameter
+            or '-'-delimited pair of variable irradiance data source and
+            irradiance type (options: ['nsrdb-ghi', 'nsrdb-clearsky_ghi'])
+        conductor_params (dict[str, numeric]): Dictionary to override default
+            values for conductor temperature (75°C), absorptivity (0.8), and
+            emissivity (0.8)
+        forecast_margin (dict[str, numeric]): Additive adjustments to apply
+            to each weather parameter
     """
     now = datetime.now()
     timestamp = f"{now.year}{str(now.month).zfill(2)}{str(now.day).zfill(2)}"

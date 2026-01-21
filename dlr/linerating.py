@@ -276,17 +276,18 @@ def calc_ratings(
     Args:
         line: gpd.GeoSeries
         years: int or list representing year(s) of historic weather data
-        windspeed (numeric, str): Static windspeed [m/s] or "data" to use
-            WTK hourly windspeed data
-        pressure (numeric, str): Static air pressure [Pa] or "data" to
-            use WTK hourly pressure data
+        windspeed (numeric, str): Static windspeed [m/s] or data source
+            for variable windspeed (options: ['wtk'])
+        pressure (numeric, str): Static air pressure [Pa] or data source
+            for variable pressure (options: ['wtk'])
         temp_ambient_air (numeric, str): Static air temperature [K] or
-            "data" to use WTK hourly temperature data
-        wind_conductor_angle (numeric): Static angle between wind direction and
-            line segment [°] or "data" to use WTK hourly wind direction data
+            data source for variable temp (options: ['wtk'])
+        wind_conductor_angle (numeric): Static angle between wind direction
+            and line segment [°] or data source for variable wind direction
+            (options: ['wtk'])
         solar_ghi (numeric): Static solar global horizontal irradiance [W m^-2]
-            or irradiance type (e.g., "clearsky_ghi") to use NSRDB hourly
-            irradiance data of the provided type
+            or '-'-delimited pair of variable irradiance data source and
+            irradiance type (options: ['nsrdb-ghi', 'nsrdb-clearsky_ghi'])
         temp_conductor (float): Maximum allowable temperature of conductor [K].
             Default of 75°C + C2K = 348.15 K is a rule of thumb for ACSR conductors.
         diameter_conductor (float): Diameter of conductor [m]
@@ -307,16 +308,36 @@ def calc_ratings(
 
     ### Get weather data
     weatherlist = []
-    if temp_ambient_air == 'data':
-        weatherlist.append('temperature')
-    if windspeed == 'data':
-        weatherlist.append('windspeed')
-    if wind_conductor_angle == 'data':
-        weatherlist.append('winddirection')
-    if pressure == 'data':
-        weatherlist.append('pressure')
+
+    wind_data_sources = ['wtk']
+    weather_wind_data_map = {
+        'temperature': temp_ambient_air,
+        'windspeed': windspeed,
+        'winddirection': wind_conductor_angle,
+        'pressure': pressure,
+    }
+    for weather, data in weather_wind_data_map.items():
+        if isinstance(data, str):
+            if data in wind_data_sources:
+                weatherlist.append(weather)
+            else:
+                raise NotImplementedError(
+                    f"{weather}={data} is not a valid input. "
+                    f"Valid sources for {weather} are {wind_data_sources}."
+                )
+
+    solar_data_sources = ['nsrdb-ghi', 'nsrdb-clearsky_ghi']
     if isinstance(solar_ghi, str):
-        weatherlist.append(solar_ghi)
+        if solar_ghi in solar_data_sources:
+            ghi_type = solar_ghi.split('-')[1]
+            weatherlist.append(ghi_type)
+        else:
+            raise NotImplementedError(
+                f"solar_ghi={solar_ghi} is not a valid input. "
+                f"Valid sources for solar_ghi are {solar_data_sources}."
+            )
+    else:
+        ghi_type = None
 
     dfweather = get_weather_h5py(
         line=line,
@@ -330,7 +351,7 @@ def calc_ratings(
     if isinstance(temp_ambient_air_data, pd.DataFrame):
         temp_ambient_air_data += physics.C2K
     pressure_data = dfweather.get('pressure', {})
-    solar_ghi_data = dfweather.get(solar_ghi, {})
+    solar_ghi_data = dfweather.get(ghi_type, {})
 
     if 'winddirection' in dfweather:
         ### Get segment angles from North
