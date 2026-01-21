@@ -67,8 +67,8 @@ options:
                         Static solar irradiance (in W/m**2) or
                         '-'-delimited pair of data source for
                         variable irradiance and irradiance
-                        type (options: ['ghi',
-                        'clearsky_ghi'])
+                        type (options: ['nsrdb-ghi',
+                        'nsrdb-clearsky_ghi'])
   -c [CONDUCTOR_PARAMS ...], --conductor_params [CONDUCTOR_PARAMS ...]
                         Accepted parameters are 'temperature'
                         (in C), 'emissivity', and

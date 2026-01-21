@@ -191,7 +191,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i", "--irradiance", required=False, nargs="?", default=1000,
         help="Static solar irradiance (in W/m**2) or '-'-delimited pair of data source for "
-        "variable irradiance and irradiance type (options: ['ghi', 'clearsky_ghi'])"
+        "variable irradiance and irradiance type (options: ['nsrdb-ghi', 'nsrdb-clearsky_ghi'])"
     )
     parser.add_argument(
         "-c", "--conductor_params", required=False, nargs="*", action=DictArg, default={},
