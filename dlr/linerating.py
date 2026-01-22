@@ -235,14 +235,17 @@ def get_weather_h5py(
                 index=time_index,
                 columns=indices,
             ) * scale[data]
-            ## To match WTK, downsample to 60-minute resolution
-            ## and remove timezone information
-            if data == 'nsrdb':
+
+            ## Localize to UTC timezone if not already localized
+            if dictweather[weather,year].index.tz is None:
                 dictweather[weather,year] = (
-                    dictweather[weather,year]
-                    .tz_localize(None)
-                    .iloc[::2]
+                    dictweather[weather,year].tz_localize('UTC')
                 )
+            ## NSRDB has 30-minute resolution,
+            ## so downsample to 60-minute to match WTK
+            if data == 'nsrdb':
+                dictweather[weather,year] = dictweather[weather,year].iloc[::2]
+
             ## Pressure is in kPa but needs to be in Pa
             if datum.startswith('pressure'):
                 dictweather[weather,year] *= 1e3
