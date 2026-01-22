@@ -6,11 +6,12 @@ Methodological details and important caveats are described at [https://www.nrel.
 
 ## Installation
 
-1. To set up your own development version of this repo:
+1. To set up your own development version of this repo for the first time, perform the following steps.
+Then, whenever you run code from this repo, activate the environment (`conda activate dlr`) first.
     1. Clone this repo: `git clone git@github.com:NREL/DynamicLineRatings.git`
     2. Navigate to the repository directory, then set up the conda environment:
         1. `conda env create -f environment.yml`
-        2. Each time you use code from this repo, run `conda activate dlr` first.
+        2. `conda activate dlr`
         3. `pip install -e .`
 2. Alternatively, to include as a package in a separate conda environment, add this line to your `environment.yaml` (or run it with your environment activated):
     1. `pip install git+https://github.com/NREL/DynamicLineRatings.git`
