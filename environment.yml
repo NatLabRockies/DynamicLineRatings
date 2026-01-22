@@ -1,31 +1,10 @@
 name: dlr
 channels:
   - conda-forge
-  - nrel
+
 dependencies:
   - python=3.12
-  - cmocean=4.0
-  - fiona=1.10
-  - folium=0.18
-  - geopandas=1.0
-  - h5py=3.12
-  - h5pyd=0.18
-  - ipykernel=6.29
-  - ipywidgets=8.1
-  - matplotlib=3.9
+  - pip
   - nb_conda=2.2
-  - notebook=6.5
-  - nrel-rex=0.2
-  - numpy=2.1
-  - pandas=2.2
-  - pip=24.3
   - proj-data=1.19
   - proj=9.5
-  - pyproj=3.7
-  - pytables=3.10
-  - pytest=8.3
-  - rasterio=1.4
-  - requests=2.32
-  - scipy=1.14
-  - shapely=2.0
-  - tqdm=4.66
